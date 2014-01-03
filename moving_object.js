@@ -27,7 +27,6 @@
     var y1 = this.pos[1];
     var x2 = obj.pos[0];
     var y2 = obj.pos[1];
-    //(x1 - x2) ^ 2 + (y1 - y2) ^ 2 = r ^ 2
     return Math.pow(this.radius + obj.radius, 2) >=
            Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2);
   }

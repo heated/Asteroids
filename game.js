@@ -63,7 +63,7 @@
     var player = this.player;
     this.asteroids.forEach(function(asteroid) {
       if (asteroid.isCollidedWith(player)) {
-        Game.over();
+        //Game.over();
       }
     });
   }
