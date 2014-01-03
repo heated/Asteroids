@@ -12,7 +12,7 @@
     Asteroids.MovingObject.call(this, pos, vel, Asteroid.RADIUS, Asteroid.COLOR);
   };
 
-  Asteroid.COLOR = "black";
+  Asteroid.COLOR = "white";
   Asteroid.RADIUS = 10;
 
   Asteroid.randomAsteroid = function(BOARDSIZE) {

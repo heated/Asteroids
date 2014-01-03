@@ -16,5 +16,19 @@
     }
   }
 
+  Ship.prototype.fireBullet = function() {
+    var speed = this.speed();
+
+    var bullet_speed = 8;
+    var bullet_vel = [bullet_speed * this.vel[0] / speed,
+                      bullet_speed * this.vel[1] / speed];
+
+    return new Asteroids.Bullet(this.pos.slice(0), bullet_vel);
+  }
+
+  Ship.prototype.speed = function() {
+    return Math.sqrt(Math.pow(this.vel[0], 2) +
+      Math.pow(this.vel[1], 2));
+  }
 
 })(this);
