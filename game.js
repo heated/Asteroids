@@ -5,94 +5,120 @@
   var Game = Asteroids.Game = function(ctx) {
     this.ctx = ctx;
     this.asteroids = [];
-    this.addAsteroids(10);
     this.bullets = [];
     this.player = new Asteroids.Ship(
       [BOARDSIZE[0] / 2 + 30, BOARDSIZE[1] / 2 + 30],
-      [0, 0]
+      this
     );
-    this.bindKeyHandlers();
+
+    this.addAsteroids(1);
   }
 
   Game.FPS = 60;
 
-  Game.prototype.addAsteroids = function(num) {
-    for(var i = 0; i < num; i++) {
-      this.asteroids.push(Asteroids.Asteroid.randomAsteroid(BOARDSIZE));
-    }
-  }
+  Game.prototype = {
+    addAsteroids: function(num) {
+      this.player.radius = 200;
 
-  Game.prototype.draw = function() {
-    this.ctx.clearRect(0, 0, BOARDSIZE[0], BOARDSIZE[1]);
+      for(var i = 0; i < num; i++) {
+        // spawn away from the player
+        do {
+          var newAsteroid = Asteroids.Asteroid.random(this);
+        } while(this.player.isCollidedWith(newAsteroid));
 
-    this.player.draw(this.ctx);
-
-    this.asteroids.forEach(function(asteroid) {
-      asteroid.draw(this.ctx);
-    })
-
-    this.bullets.forEach(function(bullet) {
-      bullet.draw(this.ctx);
-    })
-  }
-
-  Game.prototype.move = function() {
-    this.asteroids.forEach(function(asteroid) {
-      asteroid.move(BOARDSIZE);
-    })
-    this.bullets.forEach(function(bullet) {
-      bullet.move(BOARDSIZE);
-    })
-    this.player.move(BOARDSIZE);
-  }
-
-  Game.prototype.step = function() {
-    this.move();
-    this.checkCollisions();
-    this.draw();
-  }
-
-  Game.prototype.start = function() {
-    Game.gameLoop = window.setInterval(this.step.bind(this), 1000 / Game.FPS);
-  }
-
-  Game.prototype.checkCollisions = function() {
-    var player = this.player;
-    this.asteroids.forEach(function(asteroid) {
-      if (asteroid.isCollidedWith(player)) {
-        //Game.over();
+        this.asteroids.push(newAsteroid);
       }
-    });
-  }
 
-  Game.prototype.fireBullet = function() {
-    if (this.bullets.length < 10) {
+      this.player.radius = Asteroids.Ship.RADIUS;
+    },
+
+    draw: function() {
+      this.ctx.clearRect(0, 0, BOARDSIZE[0], BOARDSIZE[1]);
+
+      this.entities().forEach(function(entity) {
+        entity.draw(this.ctx);
+      })
+    },
+
+    move: function() {
+      this.entities().forEach(function(entity) {
+        entity.move();
+      });
+    },
+
+    step: function() {
+      this.player.cooldown--;
+      this.playerInput();
+      this.move();
+      this.checkCollisions();
+      this.draw();
+      this.checkWin();
+    },
+
+    start: function() {
+      this.gameLoop = window.setInterval(this.step.bind(this), 1000/Game.FPS);
+    },
+
+    checkCollisions: function() {
+      var player = this.player;
+      var that = this;
+      this.asteroids.forEach(function(asteroid) {
+        if (asteroid.isCollidedWith(player)) {
+          that.lose();
+        }
+      });
+    },
+
+    fireBullet: function() {
       this.bullets.push(this.player.fireBullet());
-      this.bullets[this.bullets.length - 1].game = this;
+    },
+
+    removeAsteroid: function(index) {
+      this.asteroids[index].spawn(this);
+      this.asteroids.splice(index, 1);
+    },
+
+    removeBullet: function(bullet) {
+      this.bullets.splice(this.bullets.indexOf(bullet), 1);
+    },
+
+    playerInput: function() {
+      var player = this.player;
+      if(key.isPressed('w'))
+        player.power(0.1);
+      if(key.isPressed('a'))
+        player.rotation -= 1/10;
+      if(key.isPressed('d'))
+        player.rotation += 1/10;
+      if(key.isPressed('space') && player.canFire())
+        this.fireBullet();
+    },
+
+    entities: function() {
+      var entities = this.asteroids
+        .concat(this.bullets);
+      
+      entities.push(this.player);
+
+      return entities;
+    },
+
+    lose: function() {
+      setTimeout(function(){ alert("Defeat is unacceptable."); }, 100);
+      clearInterval(this.gameLoop);
+    },
+
+    win: function() {
+      setTimeout(function(){
+        alert("Congratulations, you have saved the day!");
+      }, 100);
+      clearInterval(this.gameLoop);
+    },
+
+    checkWin: function() {
+      if(this.asteroids.length == 0) {
+        this.win();
+      }
     }
-  }
-
-  Game.prototype.removeAsteroid = function(index) {
-    this.asteroids[index].spawn(this);
-    this.asteroids.splice(index, 1);
-  }
-
-  Game.prototype.removeBullet = function(bullet) {
-    this.bullets.splice(this.bullets.indexOf(bullet), 1);
-  }
-
-  Game.prototype.bindKeyHandlers = function() {
-    var player = this.player;
-    var that = this;
-    key('w', function() { player.power(1); });
-    key('a', function() { player.rotation -= 1/5; });
-    key('s', function() { player.power(-1); });
-    key('d', function() { player.rotation += 1/5; });
-    key('space', function() { that.fireBullet(); });
-  }
-
-  Game.over = function () {
-    alert("Unacceptable.");
-    clearInterval(Game.gameLoop);
   }
 })(this);

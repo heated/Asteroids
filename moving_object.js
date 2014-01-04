@@ -1,31 +1,24 @@
 (function (root) {
   var Asteroids = root.Asteroids = (root.Asteroids || {});
 
-  var MovingObject = Asteroids.MovingObject = function(pos, vel, rotation, rotSpd, radius, color) {
+  var MovingObject = Asteroids.MovingObject = function(pos, vel, radius, game, rotation, rotSpd, color) {
     this.pos = pos;
     this.vel = vel;
-
-    this.rotation = rotation;
-    this.rotSpd = rotSpd;
-
     this.radius = radius;
-    this.color = color;
+    this.game = game;
+
+    this.color = color || "white";
+    this.rotation = rotation || 0;
+    this.rotSpd = rotSpd || 0;
   };
 
-  MovingObject.prototype.move = function(BOARDSIZE) {
-    FIELD = BOARDSIZE[0] + 60;
+  MovingObject.prototype.move = function() {
+    FIELD = Asteroids.BOARDSIZE[0] + 60;
     for(var i = 0; i < 2; i++) {
       this.pos[i] = (FIELD * 1000 + this.pos[i] + this.vel[i]) % FIELD;
     }
 
     this.rotation += this.rotSpd;
-  }
-
-  MovingObject.prototype.draw = function(ctx) {
-    ctx.strokeStyle = this.color;
-    ctx.beginPath();
-    ctx.arc(this.pos[0] - 30, this.pos[1] - 30, this.radius, 0, Math.PI * 2, true);
-    ctx.stroke();
   }
 
   MovingObject.prototype.isCollidedWith = function(obj) {

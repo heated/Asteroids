@@ -8,19 +8,18 @@
   var Asteroids = root.Asteroids = (root.Asteroids || {});
 
 
-  var Asteroid = Asteroids.Asteroid = function(pos, vel, rotSpd, mass) {
+  var Asteroid = Asteroids.Asteroid = function(pos, vel, rotSpd, mass, game) {
     var rotation = Math.random() * Math.PI * 2;
     var radius = mass * 10;
     this.mass = mass;
-    Asteroids.MovingObject.call(this, pos, vel, rotation, rotSpd, radius, Asteroid.COLOR);
+    Asteroids.MovingObject.call(this, pos, vel, radius, game, rotation, rotSpd);
     this.poly = ((Math.random() * 4) | 0) + 5;
   };
 
   Asteroid.inherits(Asteroids.MovingObject);
 
-  Asteroid.COLOR = "white";
-
-  Asteroid.randomAsteroid = function(BOARDSIZE, pos, mass) {
+  Asteroid.random = function(game, pos, mass) {
+    var BOARDSIZE = Asteroids.BOARDSIZE;
     var x = Math.random() * BOARDSIZE[0];
     var y = Math.random() * BOARDSIZE[1];
 
@@ -32,14 +31,10 @@
     var pos = pos || [x, y];
     var vel = [xSpd, ySpd];
     var rotSpd = (Math.random() - 0.5) / 10;
-    var mass = mass || (1 + (Math.random() * 3) | 0);
+    var mass = mass || (1 + (Math.random() * 4) | 0);
 
-    return new Asteroid(pos, vel, rotSpd, mass);
+    return new Asteroid(pos, vel, rotSpd, mass, game);
   };
-
-  Asteroid.spawn = function(pos, mass) {
-    return Asteroid.randomAsteroid(Asteroids.BOARDSIZE, pos, mass);
-  }
 
   Asteroid.prototype.draw = function(ctx) {
     ctx.strokeStyle = this.color;
@@ -47,8 +42,8 @@
 
     for(var i = 0; i <= this.poly; i++) {
       new_angle = this.rotation + Math.PI * 2 * i / this.poly;
-      new_x = this.pos[0] - 30 + this.radius * Math.cos(new_angle);
-      new_y = this.pos[1] - 30 + this.radius * Math.sin(new_angle);
+      new_x = this.pos[0] - 30 + 1.1 * this.radius * Math.cos(new_angle);
+      new_y = this.pos[1] - 30 + 1.1 * this.radius * Math.sin(new_angle);
 
       if(i == 0) {
         ctx.moveTo(new_x, new_y);
@@ -60,10 +55,13 @@
     ctx.stroke();
   }
 
-  Asteroid.prototype.spawn = function(game) {
+  Asteroid.prototype.spawn = function() {
     if(this.mass > 1) {
       for(var i = 0; i < 3; i++) {
-        game.asteroids.push(Asteroid.spawn(this.pos.slice(0), this.mass - 1));
+        newAsteroid = Asteroid.random(this.game,
+                                      this.pos.slice(0),
+                                      this.mass - 1);
+        this.game.asteroids.push(newAsteroid);
       }
     }
   }
