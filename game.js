@@ -11,7 +11,7 @@
       this
     );
 
-    this.addAsteroids(1);
+    this.addAsteroids(10);
   }
 
   Game.FPS = 60;

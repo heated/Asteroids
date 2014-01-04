@@ -17,7 +17,7 @@
   }
 
   Ship.prototype.fireBullet = function() {
-    this.cooldown = 10;
+    this.cooldown = 15;
     var bullet_speed = 6;
     var bullet_vel = [bullet_speed * Math.cos(this.rotation),
                       bullet_speed * Math.sin(this.rotation)];

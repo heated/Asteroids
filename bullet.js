@@ -9,7 +9,7 @@
 
   Bullet.inherits(Asteroids.MovingObject);
 
-  Bullet.RADIUS = 2;
+  Bullet.RADIUS = 3;
 
   Bullet.prototype.hitAsteroids = function() {
     var that = this;
