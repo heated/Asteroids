@@ -11,7 +11,6 @@
       [BOARDSIZE[0] / 2, BOARDSIZE[1] / 2],
       [0, 0]
     );
-    this.impulse = [0, 0];
     this.bindKeyHandlers();
   }
 
@@ -44,9 +43,7 @@
     this.bullets.forEach(function(bullet) {
       bullet.move(BOARDSIZE);
     })
-    this.player.power(this.impulse);
     this.player.move(BOARDSIZE);
-    this.impulse = [0, 0];
   }
 
   Game.prototype.step = function() {
@@ -69,13 +66,14 @@
   }
 
   Game.prototype.fireBullet = function() {
-    if (this.bullets.length < 10 && this.player.speed() > 0) {
+    if (this.bullets.length < 10) {
       this.bullets.push(this.player.fireBullet());
       this.bullets[this.bullets.length - 1].game = this;
     }
   }
 
   Game.prototype.removeAsteroid = function(index) {
+    this.asteroids[index].spawn(this);
     this.asteroids.splice(index, 1);
   }
 
@@ -84,16 +82,17 @@
   }
 
   Game.prototype.bindKeyHandlers = function() {
+    var player = this.player;
     var that = this;
-    key('w', function() { that.impulse = [0, -1]; });
-    key('a', function() { that.impulse = [-1, 0]; });
-    key('s', function() { that.impulse = [0, 1]; });
-    key('d', function() { that.impulse = [1, 0]; });
+    key('w', function() { player.power(1); });
+    key('a', function() { player.rotation -= 1/5; });
+    key('s', function() { player.power(-1); });
+    key('d', function() { player.rotation += 1/5; });
     key('space', function() { that.fireBullet(); });
   }
 
   Game.over = function () {
-    alert("You suck at this game <3 !!!1XD");
+    alert("Unacceptable.");
     clearInterval(Game.gameLoop);
   }
 })(this);

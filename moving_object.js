@@ -1,24 +1,30 @@
 (function (root) {
   var Asteroids = root.Asteroids = (root.Asteroids || {});
 
-  var MovingObject = Asteroids.MovingObject = function(pos, vel, radius, color) {
+  var MovingObject = Asteroids.MovingObject = function(pos, vel, rotation, rotSpd, radius, color) {
     this.pos = pos;
     this.vel = vel;
+
+    this.rotation = rotation;
+    this.rotSpd = rotSpd;
 
     this.radius = radius;
     this.color = color;
   };
 
   MovingObject.prototype.move = function(BOARDSIZE) {
+    FIELD = BOARDSIZE[0] + 60;
     for(var i = 0; i < 2; i++) {
-      this.pos[i] = (BOARDSIZE[i]*1000 + this.pos[i] + this.vel[i]) % BOARDSIZE[i];
+      this.pos[i] = (FIELD * 1000 + this.pos[i] + this.vel[i]) % FIELD;
     }
+
+    this.rotation += this.rotSpd;
   }
 
   MovingObject.prototype.draw = function(ctx) {
     ctx.strokeStyle = this.color;
     ctx.beginPath();
-    ctx.arc(this.pos[0], this.pos[1], this.radius, 0, Math.PI * 2, true);
+    ctx.arc(this.pos[0] - 30, this.pos[1] - 30, this.radius, 0, Math.PI * 2, true);
     ctx.stroke();
   }
 
