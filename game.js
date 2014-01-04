@@ -8,7 +8,7 @@
     this.addAsteroids(10);
     this.bullets = [];
     this.player = new Asteroids.Ship(
-      [BOARDSIZE[0] / 2, BOARDSIZE[1] / 2],
+      [BOARDSIZE[0] / 2 + 30, BOARDSIZE[1] / 2 + 30],
       [0, 0]
     );
     this.bindKeyHandlers();
