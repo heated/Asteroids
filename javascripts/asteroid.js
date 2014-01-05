@@ -31,7 +31,7 @@
     var pos = pos || [x, y];
     var vel = [xSpd, ySpd];
     var rotSpd = (Math.random() - 0.5) / 10;
-    var mass = mass || (1 + (Math.random() * 4) | 0);
+    var mass = mass || (1 + (Math.random() * 3) | 0);
 
     return new Asteroid(pos, vel, rotSpd, mass, game);
   };

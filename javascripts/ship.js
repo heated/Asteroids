@@ -25,7 +25,7 @@
     return new Asteroids.Bullet(this.pos.slice(0), bullet_vel, this.game);
   }
 
-  Ship.prototype.draw = function() {
+  Ship.prototype.draw = function(ctx) {
     ctx.strokeStyle = this.color;
     ctx.beginPath();
     ctx.moveTo(this.pos[0] - 30, this.pos[1] - 30);

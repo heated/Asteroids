@@ -33,10 +33,11 @@
     },
 
     draw: function() {
-      this.ctx.clearRect(0, 0, BOARDSIZE[0], BOARDSIZE[1]);
+      var ctx = this.ctx;
+      ctx.clearRect(0, 0, BOARDSIZE[0], BOARDSIZE[1]);
 
       this.entities().forEach(function(entity) {
-        entity.draw(this.ctx);
+        entity.draw(ctx);
       })
     },
 
@@ -64,7 +65,7 @@
       var that = this;
       this.asteroids.forEach(function(asteroid) {
         if (asteroid.isCollidedWith(player)) {
-          that.lose();
+          //that.lose();
         }
       });
     },
@@ -122,3 +123,16 @@
     }
   }
 })(this);
+
+$(function() {
+  var canvas = $('<canvas id="game">')[0];
+  
+  canvas.width  = Asteroids.BOARDSIZE[0];
+  canvas.height = Asteroids.BOARDSIZE[1];
+
+  $('#main').prepend(canvas);
+  var ctx = canvas.getContext("2d");
+
+  var game = new Asteroids.Game(ctx);
+  game.start();
+});
