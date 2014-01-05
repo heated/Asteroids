@@ -4,14 +4,6 @@
 
   var Game = Asteroids.Game = function(ctx) {
     this.ctx = ctx;
-    this.asteroids = [];
-    this.bullets = [];
-    this.player = new Asteroids.Ship(
-      [BOARDSIZE[0] / 2 + 30, BOARDSIZE[1] / 2 + 30],
-      this
-    );
-
-    this.addAsteroids(10);
   }
 
   Game.FPS = 60;
@@ -57,6 +49,14 @@
     },
 
     start: function() {
+      this.asteroids = [];
+      this.bullets = [];
+      this.player = new Asteroids.Ship(
+        [BOARDSIZE[0] / 2 + 30, BOARDSIZE[1] / 2 + 30],
+        this
+      );
+
+      this.addAsteroids(10);
       this.gameLoop = window.setInterval(this.step.bind(this), 1000/Game.FPS);
     },
 
@@ -93,6 +93,8 @@
         player.rotation += 1/10;
       if(key.isPressed('space') && player.canFire())
         this.fireBullet();
+
+      key('r', this.restart.bind(this));
     },
 
     entities: function() {
@@ -120,13 +122,18 @@
       if(this.asteroids.length == 0) {
         this.win();
       }
+    },
+
+    restart: function() {
+      clearInterval(this.gameLoop);
+      this.start();
     }
   }
 })(this);
 
 $(function() {
   var canvas = $('<canvas id="game">')[0];
-  
+
   canvas.width  = Asteroids.BOARDSIZE[0];
   canvas.height = Asteroids.BOARDSIZE[1];
 
