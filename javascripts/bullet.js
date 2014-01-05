@@ -29,8 +29,8 @@
     }
   }
 
-  Bullet.prototype.move = function(BOARDSIZE) {
-    Asteroids.MovingObject.prototype.move.call(this, Asteroids.BOARDSIZE);
+  Bullet.prototype.move = function() {
+    Asteroids.MovingObject.prototype.move.call(this, Asteroids.SIZE);
     this.hitAsteroids();
   }
 

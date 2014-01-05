@@ -1,6 +1,6 @@
 (function (root) {
   var Asteroids = root.Asteroids = (root.Asteroids || {});
-  var BOARDSIZE = Asteroids.BOARDSIZE = [500, 500];
+  var SIZE = Asteroids.SIZE = 500;
 
   var Game = Asteroids.Game = function(ctx) {
     this.ctx = ctx;
@@ -26,7 +26,7 @@
 
     draw: function() {
       var ctx = this.ctx;
-      ctx.clearRect(0, 0, BOARDSIZE[0], BOARDSIZE[1]);
+      ctx.clearRect(0, 0, SIZE, SIZE);
 
       this.entities().forEach(function(entity) {
         entity.draw(ctx);
@@ -51,8 +51,9 @@
     start: function() {
       this.asteroids = [];
       this.bullets = [];
+      this.particles = [];
       this.player = new Asteroids.Ship(
-        [BOARDSIZE[0] / 2 + 30, BOARDSIZE[1] / 2 + 30],
+        [SIZE / 2 + 30, SIZE / 2 + 30],
         this
       );
 
@@ -65,7 +66,7 @@
       var that = this;
       this.asteroids.forEach(function(asteroid) {
         if (asteroid.isCollidedWith(player)) {
-          //that.lose();
+          that.lose();
         }
       });
     },
@@ -98,7 +99,8 @@
     },
 
     entities: function() {
-      var entities = this.asteroids
+      var entities = this.particles
+        .concat(this.asteroids)
         .concat(this.bullets);
       
       entities.push(this.player);
@@ -134,8 +136,8 @@
 $(function() {
   var canvas = $('<canvas id="game">')[0];
 
-  canvas.width  = Asteroids.BOARDSIZE[0];
-  canvas.height = Asteroids.BOARDSIZE[1];
+  canvas.width  = Asteroids.SIZE;
+  canvas.height = Asteroids.SIZE;
 
   $('#main').prepend(canvas);
   var ctx = canvas.getContext("2d");

@@ -13,7 +13,7 @@
   };
 
   MovingObject.prototype.move = function() {
-    FIELD = Asteroids.BOARDSIZE[0] + 60;
+    FIELD = Asteroids.SIZE + 60;
     for(var i = 0; i < 2; i++) {
       this.pos[i] = (FIELD * 1000 + this.pos[i] + this.vel[i]) % FIELD;
     }

@@ -19,9 +19,9 @@
   Asteroid.inherits(Asteroids.MovingObject);
 
   Asteroid.random = function(game, pos, mass) {
-    var BOARDSIZE = Asteroids.BOARDSIZE;
-    var x = Math.random() * BOARDSIZE[0];
-    var y = Math.random() * BOARDSIZE[1];
+    var SIZE = Asteroids.SIZE;
+    var x = Math.random() * SIZE;
+    var y = Math.random() * SIZE;
 
     var angle = Math.random() * Math.PI * 2;
     var speed = 1.0;
