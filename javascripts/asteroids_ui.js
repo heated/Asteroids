@@ -298,7 +298,11 @@
 
   AsteroidsUI.renderText = function(incString) {
 
-  }
+  };
+
+  Asteroids.checkIsHighScore = function(score) {
+
+  };
 
   AsteroidsUI.UICallbacks = {
     preparation: function() {
@@ -335,7 +339,7 @@
         AsteroidsUI.gameView.$youWinImg.css({opacity: 0});
         AsteroidsUI.initializeMainMenu();
         Starfield.start(AsteroidsUI.$gameContainer);
-      }, 5000);
+      }, 2000);
     }
   };
 
