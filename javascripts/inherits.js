@@ -1,4 +1,4 @@
-Function.prototype.inherits = function (parent) {
+Function.prototype.inherits = function(parent) {
   var Surrogate = function() {};
   Surrogate.prototype = parent.prototype;
   this.prototype = new Surrogate();
@@ -27,7 +27,6 @@ Ship.prototype.update = function() {
 
 function Asteroid(x, y) {
   MovingObject.call(this, x, y);
-
 };
 
 Asteroid.inherits(MovingObject);

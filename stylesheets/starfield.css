@@ -1,0 +1,26 @@
+.starfield {
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+       -o-user-select: none;
+          user-select: none;    
+
+  height: 500px;
+  width: 500px;
+  overflow: hidden;
+  background-color: black;
+  margin: 0 auto;
+  position:relative;
+}
+
+.starfield-star {
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+       -o-user-select: none;
+          user-select: none;    
+  position: absolute;
+  background-color: white;
+  height: .2%;
+  width: .2%;
+}
