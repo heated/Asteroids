@@ -121,7 +121,7 @@
       this.asteroids.forEach(function(asteroid) {
         if (player !== null && asteroid.isCollidedWith(player) && that.invincibleTimer <= 0) {
           soundManager.play("explode2");
-          that.lives--;
+          that.lives = that.lives <= 0 ? 0 : that.lives - 1;
           if (that.lives <= 0) {
             that.lose();
           } else {
