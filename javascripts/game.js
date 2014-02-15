@@ -71,6 +71,7 @@
     },
 
     checkScore: function() {
+      console.log(this.lives);
       if(this.pointsToNextLife <= 0) {
         this.lives++;
         this.pointsToNextLife = 10000 - this.pointsToNextLife
