@@ -78,7 +78,7 @@
     },
 
     checkSpawn: function() {
-      if(this.player == null && this.spawnTimer <= 0){
+      if(this.player == null && this.spawnTimer <= 0 && this.lives > 0){
         var newPlayer = new Asteroids.Ship(
           [SIZE / 2 + 30, SIZE / 2 + 30],
           this
@@ -192,7 +192,7 @@
     lose: function() {
       this.UICallbacks.beforeLoss();
       var that = this;
-      setInterval(function() {
+      window.setTimeout(function() {
         window.clearInterval(that.gameLoop);
         that.UICallbacks.loss();
       }, 3000);
