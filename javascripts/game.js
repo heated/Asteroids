@@ -1,9 +1,10 @@
-(function (root) {
+(function(root) {
   var Asteroids = root.Asteroids = (root.Asteroids || {});
   var SIZE = Asteroids.SIZE = 500;
 
-  var Game = Asteroids.Game = function(ctx) {
+  var Game = Asteroids.Game = function(ctx, callbacks) {
     this.ctx = ctx;
+    this.UICallbacks = callbacks;
   }
 
   Game.FPS = 60;
@@ -29,26 +30,72 @@
       ctx.clearRect(0, 0, SIZE, SIZE);
 
       this.entities().forEach(function(entity) {
-        entity.draw(ctx);
+        if(entity !== null) {
+          entity.draw(ctx);
+        }
       })
+    },
+
+    playerBlink: function() {
+      if(this.player !== null && this.invincibleTimer > 0 && this.invincibleTimer % 10 == 0) {
+        this.player.color = this.player.color == "black" ? "white" : "black" 
+      }
     },
 
     move: function() {
       this.entities().forEach(function(entity) {
-        entity.move();
+        if(entity !== null) {
+          entity.move();
+        }
       });
     },
 
     step: function() {
-      this.player.cooldown--;
-      this.playerInput();
+      if(this.player !== null) {
+        this.player.cooldown--;
+        this.playerInput();
+      }
+      this.checkSpawn();
+      if(this.invincibleTimer > 0) {
+        this.playerBlink();
+        this.invincibleTimer -= 1;
+      } else if (this.player !== null) {
+        this.player.color = "white";
+      }
       this.move();
       this.checkCollisions();
+      this.checkScore();
       this.draw();
       this.checkWin();
+      this.UICallbacks.update();
+    },
+
+    checkScore: function() {
+      if(this.pointsToNextLife <= 0) {
+        this.lives++;
+        this.pointsToNextLife = 10000 - this.pointsToNextLife
+      }
+    },
+
+    checkSpawn: function() {
+      if(this.player == null && this.spawnTimer <= 0){
+        var newPlayer = new Asteroids.Ship(
+          [SIZE / 2 + 30, SIZE / 2 + 30],
+          this
+        );
+        this.invincibleTimer = 180;
+        this.player = newPlayer;
+      } else if (this.player == null && this.spawnTimer > 0) {
+        this.spawnTimer -= 1;
+      }
     },
 
     start: function() {
+      this.invincibleTimer = 0;
+      this.pointsToNextLife = 10000;
+      this.level = (this.level === undefined ? 1 : this.level + 1);
+      this.score = (this.score === undefined ? 0 : this.score);
+      this.lives = (this.lives === undefined ? 3 : this.lives);
       this.asteroids = [];
       this.bullets = [];
       this.particles = [];
@@ -57,25 +104,55 @@
         this
       );
 
-      this.addAsteroids(10);
-      this.gameLoop = window.setInterval(this.step.bind(this), 1000/Game.FPS);
+      var howMany = 10 + this.level;
+      this.addAsteroids(howMany > 20 ? 20 : howMany);
+      this.UICallbacks.preparation();
+      var that = this;
+      this.step();
+      window.setTimeout(function() {
+        that.gameLoop = window.setInterval(that.step.bind(that), 1000/Game.FPS);
+        that.UICallbacks.endPreparation();
+      }, 2000);
     },
 
     checkCollisions: function() {
       var player = this.player;
       var that = this;
       this.asteroids.forEach(function(asteroid) {
-        if (asteroid.isCollidedWith(player)) {
-          that.lose();
+        if (player !== null && asteroid.isCollidedWith(player) && that.invincibleTimer <= 0) {
+          soundManager.play("explode2");
+          that.lives--;
+          if (that.lives === 0) {
+            that.lose();
+          } else {
+            that.player = null;
+            that.spawnTimer = 120;
+          }
         }
       });
     },
 
     fireBullet: function() {
+      soundManager.play("fire");
       this.bullets.push(this.player.fireBullet());
     },
 
     removeAsteroid: function(index) {
+      soundManager.play("explode" + Math.abs(this.asteroids[index].mass - 4));
+      switch(this.asteroids[index].mass) {
+        case 1:
+          this.score += 100;
+          this.pointsToNextLife -= 100;
+          break;
+        case 2:
+          this.score += 50;
+          this.pointsToNextLife -= 50;
+          break;
+        case 3:
+          this.score += 20;
+          this.pointsToNextLife -= 20;
+          break;
+      }
       this.asteroids[index].spawn(this);
       this.asteroids.splice(index, 1);
     },
@@ -85,17 +162,21 @@
     },
 
     playerInput: function() {
-      var player = this.player;
-      if(key.isPressed('w'))
-        player.power(0.1);
-      if(key.isPressed('a'))
-        player.rotation -= 1/10;
-      if(key.isPressed('d'))
-        player.rotation += 1/10;
-      if(key.isPressed('space') && player.canFire())
-        this.fireBullet();
+      if(this.player !== null) {
+        var player = this.player;
+        if(key.isPressed('w')) {
+          player.power(0.1);
+          soundManager.play("thrust");
+        }
+        if(key.isPressed('a'))
+          player.rotation -= 1/10;
+        if(key.isPressed('d'))
+          player.rotation += 1/10;
+        if(key.isPressed('space') && player.canFire())
+          this.fireBullet();
 
-      key('r', this.restart.bind(this));
+        key('r', this.restart.bind(this));
+      }
     },
 
     entities: function() {
@@ -109,15 +190,21 @@
     },
 
     lose: function() {
-      setTimeout(function(){ alert("Defeat is unacceptable."); }, 100);
-      clearInterval(this.gameLoop);
+      this.UICallbacks.beforeLoss();
+      var that = this;
+      setInterval(function() {
+        clearInterval(that.gameLoop);
+        that.UICallbacks.loss();
+      });
     },
 
     win: function() {
-      setTimeout(function(){
-        alert("Congratulations, you have saved the day!");
-      }, 100);
       clearInterval(this.gameLoop);
+      if(this.level < 50) {
+        this.start();
+      } else {
+        this.UICallbacks.win();
+      }
     },
 
     checkWin: function() {
@@ -127,21 +214,11 @@
     },
 
     restart: function() {
+      this.level = undefined;
+      this.score = undefined;
+      this.lives = undefined;
       clearInterval(this.gameLoop);
       this.start();
     }
   }
 })(this);
-
-$(function() {
-  var canvas = $('<canvas id="game">')[0];
-
-  canvas.width  = Asteroids.SIZE;
-  canvas.height = Asteroids.SIZE;
-
-  $('#main').prepend(canvas);
-  var ctx = canvas.getContext("2d");
-
-  var game = new Asteroids.Game(ctx);
-  game.start();
-});

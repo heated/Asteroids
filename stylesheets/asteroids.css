@@ -3,7 +3,210 @@
   margin: 0 auto;
 }
 
-#game {
+#asteroids-game {
   background: black;
   border: 1px solid;
+  position: relative;
+  overflow: hidden;
+-webkit-user-select: none;
+   -moz-user-select: none;
+    -ms-user-select: none;
+     -o-user-select: none;
+        user-select: none; 
+}
+
+/* Loading */
+
+#asteroids-game .loading-background {
+  width: 500px;
+  height: 500px;
+  background: black;
+}
+
+#asteroids-game .loading-text-image {
+  position: absolute;
+  left: 33.4%;
+  bottom: 50%;
+}
+
+#asteroids-game .loading-ellipsis {
+  width: .5%;
+  height: .5%;
+  bottom: 50%;
+  position: absolute;
+  background-color: white;
+  opacity: 0;
+}
+
+#asteroids-game .loading-ellipsis.ellipsis-one {
+  left: 68.6%;
+}
+
+#asteroids-game .loading-ellipsis.ellipsis-two {
+  left: 70.6%;
+}
+
+#asteroids-game .loading-ellipsis.ellipsis-three {
+  left: 72.6%;
+}
+
+/* Main Menu */
+
+#asteroids-game .main-menu-div {
+  width: 500px;
+  height: 500px;
+  background: black;
+  position: relative;
+}
+
+#asteroids-game .main-menu-div img {
+  position: absolute;
+}
+
+#asteroids-game .main-menu-link {
+  width: 16%;
+  height: 5.5%;
+  cursor: pointer;
+  position: absolute;
+  background-color: black;
+  opacity: 0;
+}
+
+#asteroids-game .new-game-link {
+  bottom: 39.6%;
+  left: 42%;
+}
+
+#asteroids-game .help-link {
+  bottom: 32%;
+  left: 42%;
+}
+
+#asteroids-game .about-link {
+  bottom: 24%;
+  left: 40%;
+  width: 20%;
+}
+
+#asteroids-game .high-scores-link {
+  bottom: 16%;
+  left: 28%;
+  width: 44%;
+}
+
+/* About View */
+
+#asteroids-game .about-div {
+  width: 500px;
+  height: 500px;
+  background: black;
+}
+
+#asteroids-game .about-div img {
+  position: absolute;
+}
+
+#asteroids-game .about-back-link {
+  position: absolute;
+  width: 49%;
+  height: 5%;
+  cursor: pointer;
+  left: 2%;
+  bottom: 2%;
+}
+
+#asteroids-game .about-div .outbound-link {
+  height: 4%;
+  position: absolute;
+  cursor: pointer;
+  background-color: black;
+  opacity: 0;
+}
+
+#asteroids-game .heated-link {
+  height: 4%;
+  left: 31%;
+  top: 28.3%;
+  width: 38%;
+}
+
+#asteroids-game .polaris-link {
+  height: 4%;
+  left: 29%;
+  top: 33%;
+  width: 42%;
+}
+
+/* Help View */
+
+#asteroids-game .help-div {
+  width: 500px;
+  height: 500px;
+  background: black;
+}
+
+#asteroids-game .help-div img {
+  position: absolute;
+}
+
+#asteroids-game .help-back-link {
+  position: absolute;
+  width: 49%;
+  height: 5%;
+  cursor: pointer;
+  left: 2%;
+  bottom: 2%;
+}
+
+/* Game View */
+
+#asteroids-game .game-holder {
+  font-family: "Lucida Console", Monaco, monospace;
+  position: absolute;
+  top: 2%;
+  color: white;
+  height: 10%;
+  width: 10%;
+}
+
+#asteroids-game .asteroids-score-holder {
+  left: 2%;
+}
+
+#asteroids-game .asteroids-lives-holder {
+  left: 45%;
+}
+
+#asteroids-game .asteroids-level-holder {
+  left: 87%;
+}
+
+#asteroids-game .high-scores-back-link {
+  position: absolute;
+  width: 49%;
+  height: 5%;
+  cursor: pointer;
+  left: 2%;
+  bottom: 2%;
+}
+
+#asteroids-game .get-ready-image {
+  opacity: 0;
+  position: absolute;
+  left: 30.6%;
+  top: 47.4%;
+}
+
+#asteroids-game .game-over-image {
+  opacity: 0;
+  position: absolute;
+  left: 30.6%;
+  top: 47.4%;
+}
+
+#asteroids-game .you-win-image {
+  opacity: 0;
+  position: absolute;
+  left: 35%;
+  top: 47.4%;
 }

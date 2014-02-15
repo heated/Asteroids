@@ -1,4 +1,4 @@
-(function (root) {
+(function(root) {
   var Asteroids = root.Asteroids = (root.Asteroids || {});
 
   var MovingObject = Asteroids.MovingObject = function(pos, vel, radius, game, rotation, rotSpd, color) {
