@@ -193,13 +193,13 @@
       this.UICallbacks.beforeLoss();
       var that = this;
       setInterval(function() {
-        clearInterval(that.gameLoop);
+        window.clearInterval(that.gameLoop);
         that.UICallbacks.loss();
-      });
+      }, 3000);
     },
 
     win: function() {
-      clearInterval(this.gameLoop);
+      window.clearInterval(this.gameLoop);
       if(this.level < 50) {
         this.start();
       } else {

@@ -97,7 +97,14 @@
     return randomNum;
   };
 
+  Star.prototype.checkToClear = function() {
+    if(this.size > Starfield.size/100 + 2) {
+      this.removeSelf();
+    }
+  };
+
   Star.prototype.step = function() {
+    this.checkToClear();
     this.location[0] += this.speed * this.direction[0];
     this.location[1] += this.speed * this.direction[1];
     this.speed += this.acceleration;
