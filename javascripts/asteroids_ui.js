@@ -170,6 +170,13 @@
 
       aboutView.$backLink = aboutView.createLink("about-back");
       aboutView.linkHandlers = function() {
+        aboutView.$heatedLink.click(function() {
+          window.open("https://github.com/heated");
+        });
+        aboutView.$polarisLink.click(function() {
+          window.open("https://github.com/polaris");
+        });
+
         aboutView.$backLink.click(function() {
           AsteroidsUI.initializeMainMenu();
         });
