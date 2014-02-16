@@ -70,6 +70,18 @@ $(document).ready(function() {
       });
 
       soundManager.createSound({
+        id: "life",
+        url: "https://s3-us-west-2.amazonaws.com/polaris-asteroids-main/life.wav",
+        autoLoad: true,
+        autoPlay: false,
+        stream: false,
+        onload: function() {
+          AsteroidsUI.soundsArray.push(this);
+        },
+        volume: 100
+      });
+
+      soundManager.createSound({
         id: "explode2",
         url: "https://s3-us-west-2.amazonaws.com/polaris-asteroids-main/explode2.wav",
         autoLoad: true,
@@ -130,7 +142,7 @@ $(document).ready(function() {
       });
       return loaded;
     } 
-    if(imagesLoaded() && AsteroidsUI.soundsArray.length == 5) {
+    if(imagesLoaded() && AsteroidsUI.soundsArray.length == 6) {
       AsteroidsUI.initializeMainMenu();
     } else {
       setTimeout(function() {

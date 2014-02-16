@@ -303,8 +303,14 @@
   AsteroidsUI.sendHighScore = function() {
   };
 
-  AsteroidsUI.renderText = function(incString) {
-
+  AsteroidsUI.renderText = function(incString, className, sourceBucket) {
+    var imagesArray = [];
+    incString.split("").forEach(function(char) {
+      imagesArray.push($("<img/>"), {
+        class: (className !== undefined ? className + "-" : "") + "text-image",
+        src: sourceBucket + "image-character-" + char
+      });
+    });
   };
 
   Asteroids.checkIsHighScore = function(score) {

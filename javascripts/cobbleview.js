@@ -2,7 +2,6 @@ function CView (parent, target, visible, jQElements) {
   this.parent = parent;
   this.visible = visible;
   this.parentDisplay = parent.css("display");
-  this.parentPosition = parent.css("position");
   this.elements = [];
   for (element in jQElements) {
     this.elements.push(element);
@@ -38,10 +37,10 @@ CView.prototype.showView = function(callbacks) {
   this.parent.animate({
     "opacity": 1
   }, {
-    duration: 0,
+    duration: 1000,
     complete: function() {
       that.parent.css({
-        "position": that.parentPosition
+        position: "relative"
       });
       callbacks && callbacks.forEach(function(callback) {
         callback();
@@ -63,7 +62,7 @@ CView.prototype.hideView = function(callbacks) {
   this.parent.animate({
     "opacity": 0
   }, {
-    duration: 0,
+    duration: 1000,
     complete: function() {
       that.parent.css({"display": "none"});
       callbacks && callbacks.forEach(function(callback) {

@@ -59,7 +59,7 @@
       if(this.invincibleTimer > 0) {
         this.playerBlink();
         this.invincibleTimer -= 1;
-      } else if (this.player !== null) {
+      } else if (this.player !== null && this.player.color !== "white") {
         this.player.color = "white";
       }
       this.move();
@@ -71,8 +71,8 @@
     },
 
     checkScore: function() {
-      console.log(this.lives);
       if(this.pointsToNextLife <= 0) {
+        soundManager.play("life");
         this.lives++;
         this.pointsToNextLife = 10000 - this.pointsToNextLife
       }
@@ -93,7 +93,7 @@
 
     start: function() {
       this.invincibleTimer = 0;
-      this.pointsToNextLife = 10000;
+      this.pointsToNextLife = (this.pointsToNextLife === undefined ? 10000 : this.pointsToNextLife)
       this.level = (this.level === undefined ? 1 : this.level + 1);
       this.score = (this.score === undefined ? 0 : this.score);
       this.lives = (this.lives === undefined ? 3 : this.lives);
@@ -218,6 +218,7 @@
       this.level = undefined;
       this.score = undefined;
       this.lives = undefined;
+      this.pointsToNextLife = undefined;
       clearInterval(this.gameLoop);
       this.start();
     }
