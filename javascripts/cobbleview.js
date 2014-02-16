@@ -26,7 +26,7 @@ CView.prototype.createLink = function(name) {
     class: name + "-link"
   })
   return this.loadElement(newLink);
-}
+};
 
 CView.prototype.showView = function(callbacks) {
   this.visible = true;
