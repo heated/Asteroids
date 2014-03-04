@@ -1,4 +1,4 @@
-#[Asteroids] (vardarac-portfolio.herokuapp.com/games/asteroids)
+#[Asteroids] (https://vardarac-portfolio.herokuapp.com/games/asteroids)
 
 This is a retro-style remake of the 1979 Atari arcade classic, Asteroids.
 It includes a healthy chunk of awesome technical features, including:
@@ -19,7 +19,7 @@ And if you're not really into those, I guess there's some gameplay and stuff in 
 - Particle effects!
 - Explosions! Thrusters! Lasers!
 
-Feel free to clone or hop onto the [Heroku host] (vardarac-portfolio.herokuapp.com/games/asteroids). High score cheaters welcome and likely to be cleared once a month ;)
+Feel free to clone or hop onto the [Heroku host] (https://vardarac-portfolio.herokuapp.com/games/asteroids). High score cheaters welcome and likely to be cleared once a month ;)
 
 Cheers,
-[Vardarac] (github.com/Vardarac)
+[Vardarac] (https://github.com/Vardarac)
