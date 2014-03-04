@@ -165,8 +165,9 @@
 }
 
 #asteroids-game .high-score-level {
-  width: 10%;
+  width: 16%;
   left: 78.5%;
+  text-align: right;
 }
 
 /* High Scores Entry */
