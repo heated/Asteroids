@@ -32,7 +32,7 @@
     Starfield.loopTimeout = setTimeout(that.starloop.bind(that, jQelement), 30);
   };
 
-  Starfield.start = function (jQelement) {
+  Starfield.start = function(jQelement) {
     if(jQelement !== undefined) {
       Starfield.$el = jQelement;
     } else {

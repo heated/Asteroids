@@ -7,6 +7,9 @@
     view.showView(showCallbacks);
   };
 
+  AsteroidsUI.s3AmazonBucket = "https://s3-us-west-2.amazonaws.com/polaris-asteroids-main/"
+  AsteroidsUI.highScoresHost = "http://polaris-portfolio.herokuapp.com/scores/"
+
   AsteroidsUI.tabIndexForView = 0;
   AsteroidsUI.getTabIndex = function() {
     AsteroidsUI.tabIndexForView++;
@@ -20,44 +23,32 @@
     var $loadingDiv = jQuery("<div/>", {
       class: "loading-background"
     });
-    var loadingView = AsteroidsUI.loadingView = new CView($loadingDiv, $gameContainer, true);
+    var loadingView = AsteroidsUI.loadingView = new CView({
+      parent: $loadingDiv,
+      target: $gameContainer,
+      visible: true,
+      transitionTime: 0
+    });
 
-    loadingView.$loadingTextImg = loadingView.loadElement(images.$loadingTextImg);
-
-    loadingView.$ellipsisOne = loadingView.loadElement(jQuery("<div/>", {
-      class: "loading-ellipsis ellipsis-one"
-    }));
-    loadingView.$ellipsisTwo = loadingView.loadElement(jQuery("<div/>", {
-      class: "loading-ellipsis ellipsis-two"
-    }));
-    loadingView.$ellipsisThree = loadingView.loadElement(jQuery("<div/>", {
-      class: "loading-ellipsis ellipsis-three"
+    loadingView.$loadingTextDiv = loadingView.loadElement(jQuery("<div/>", {
+      class: "loading-text-div"
     }));
 
-    loadingView.ellipses = [
-      loadingView.$ellipsisOne,
-      loadingView.$ellipsisTwo,
-      loadingView.$ellipsisThree,
-    ];
+    loadingView.$loadingTextDiv.text("Loading");
 
     loadingView.animating = true;
     loadingView.animation = function() {
       if (loadingView.animating) {
         var wait = 500;
-        loadingView.ellipses.forEach(function(ellipsis) {
+        for(var i = 0; i < 3; i++) {
           window.setTimeout(function() {
-            ellipsis.css({
-              opacity: 1
-            });
+            var div = loadingView.$loadingTextDiv;
+            div.text(div.text() + ".");
           }, wait);
           wait += 500;
-        });
+        }
         window.setTimeout(function() {
-          loadingView.ellipses.forEach(function(ellipsis) {
-            ellipsis.css({
-              opacity: 0
-            })
-          });
+          loadingView.$loadingTextDiv.text("Loading");
           loadingView.animation();
         }, wait);
       }
@@ -85,18 +76,23 @@
       });
       $mainMenuDiv.css({position: "relative"});
 
-      var mainMenuView = AsteroidsUI.mainMenuView = new CView($mainMenuDiv, $gameContainer, true);
+      var mainMenuView = AsteroidsUI.mainMenuView = new CView({
+        parent: $mainMenuDiv,
+        target: $gameContainer,
+        visible: true,
+        transitionTime: 0
+      });
       mainMenuView.$mainMenuImg = mainMenuView.loadElement(images.$mainMenuImg);
 
-      mainMenuView.$newGameLink = mainMenuView.createLink("new-game");
-      mainMenuView.$helpLink = mainMenuView.createLink("help");
-      mainMenuView.$aboutLink = mainMenuView.createLink("about");
-      mainMenuView.$highScoresLink = mainMenuView.createLink("high-scores");
+      var $newGameLink = mainMenuView.$newGameLink = mainMenuView.createLink("new-game");
+      var $helpLink = mainMenuView.$helpLink = mainMenuView.createLink("help");
+      var $aboutLink = mainMenuView.$aboutLink = mainMenuView.createLink("about");
+      var $highScoresLink  = mainMenuView.$highScoresLink = mainMenuView.createLink("high-scores");
 
-      mainMenuView.$newGameLink.addClass("main-menu-link");
-      mainMenuView.$helpLink.addClass("main-menu-link");
-      mainMenuView.$aboutLink.addClass("main-menu-link");
-      mainMenuView.$highScoresLink.addClass("main-menu-link");
+      var elements = [$newGameLink, $helpLink, $aboutLink, $highScoresLink];
+      elements.forEach(function(element) {
+        element.addClass("main-menu-link");
+      });
 
       mainMenuView.linkHandlers = function() {
         mainMenuView.$newGameLink.click(function() {
@@ -109,7 +105,7 @@
           AsteroidsUI.initializeAbout();
         });
         mainMenuView.$highScoresLink.click(function() {
-          AsteroidsUI.intializeHighScores();
+          AsteroidsUI.initializeHighScores();
         });
 
         $(".main-menu-link").hover(function(event) {
@@ -159,7 +155,12 @@
         class: "about-div",
         tabIndex: AsteroidsUI.getTabIndex()
       });
-      var aboutView = AsteroidsUI.aboutView = new CView($aboutDiv, $gameContainer, true);
+      var aboutView = AsteroidsUI.aboutView = new CView({
+        parent: $aboutDiv,
+        target: $gameContainer,
+        visible: true,
+        transitionTime: 0
+      });
       aboutView.$aboutImg = aboutView.loadElement(images.$aboutImg);
 
       aboutView.$heatedLink = aboutView.createLink("heated");
@@ -168,7 +169,7 @@
       aboutView.$heatedLink.addClass("outbound-link");
       aboutView.$polarisLink.addClass("outbound-link");
 
-      aboutView.$backLink = aboutView.createLink("about-back");
+      aboutView.$backLink = aboutView.createLink("back-link about-back");
       aboutView.linkHandlers = function() {
         aboutView.$heatedLink.click(function() {
           window.open("https://github.com/heated");
@@ -227,10 +228,15 @@
         class: "help-div",
         tabIndex: AsteroidsUI.getTabIndex()
       });
-      var helpView = AsteroidsUI.helpView = new CView($helpDiv, $gameContainer, true);
+      var helpView = AsteroidsUI.helpView = new CView({
+        parent: $helpDiv,
+        target: $gameContainer,
+        visible: true,
+        transitionTime: 0
+      });
       helpView.$helpImg = helpView.loadElement(images.$helpImg);
 
-      helpView.$backLink = helpView.createLink("help-back");
+      helpView.$backLink = helpView.createLink("back-link help-back");
       helpView.linkHandlers = function() {
         helpView.$backLink.click(function() {
           AsteroidsUI.initializeMainMenu();
@@ -257,7 +263,55 @@
     ]);
   };
 
-  AsteroidsUI.intializeHighScores = function() {
+  AsteroidsUI.highScoresArray = [];
+
+  AsteroidsUI.getHighScores = function(callbacks) {
+    $.ajax({
+      type: "GET",
+      url: AsteroidsUI.highScoresHost + "2.js",
+      crossDomain: true,
+      dataType: "jsonp",
+      success: function(scoresArray) {
+        AsteroidsUI.highScoresArray = scoresArray;
+        callbacks.success && callbacks.success();
+        return scoresArray;
+      },
+      error: function() {
+        callbacks.error && callbacks.error();
+        return false;
+      },
+      timeout: 8000
+    });
+  };
+
+  // AsteroidsUI.specialCharacterString = function(character) {
+  //     switch(character) {
+  //       case " ":
+  //         return "space";
+  //         break;
+  //     }
+  //     return character.toLowerCase();
+  // }
+
+  // AsteroidsUI.convertTextToImage = function(incString, size) {
+  //   var imagesArray = [];
+  //   incString.split("").forEach(function(character) {
+  //     var url_character = AsteroidsUI.specialCharacterString(character);
+  //     var currentDiv = $("<div/>", {
+  //       class: "letter-container" + "-" + (size === undefined ? "small" : size)
+  //     });
+  //     currentDiv.append(AsteroidsUI.imagesHash["$" + url_character + "Img"].clone())
+  //     imagesArray.push(currentDiv);
+  //   });
+  //   return imagesArray;
+  // };
+
+  /* The functions above were part of an attempt to create custom font text by 
+   * using rasterized versions of font characters. The logic worked, but the
+   * feature presented poorly due to resize sampling. There was also a better 
+   * alternative by using CSS @font-face, which is now employed in the app. */
+
+  AsteroidsUI.initializeHighScores = function() {
     if(AsteroidsUI.highScoresView === undefined) {
       var images = AsteroidsUI.imagesHash;
       var $gameContainer = AsteroidsUI.$gameContainer;
@@ -266,10 +320,37 @@
         class: "high-scores-div",
         tabIndex: AsteroidsUI.getTabIndex()
       });
-      var highScoresView = AsteroidsUI.highScoresView = new CView($highScoresDiv, $gameContainer, true);
+      var highScoresView = AsteroidsUI.highScoresView = new CView({
+        parent: $highScoresDiv,
+        target: $gameContainer,
+        visible: true,
+        transitionTime: 0
+      });
+
+      var $nameDiv = jQuery("<div/>", {
+        class: "high-score-name high-score"
+      });
+      var $valueDiv = jQuery("<div/>", {
+        class: "high-score-value high-score"
+      });
+      var $levelDiv = jQuery("<div/>", {
+        class: "high-score-level high-score"
+      });
+
+      $nameDiv.text("Player");
+      $valueDiv.text("Score");
+      $levelDiv.text("Level");
+
+      [$nameDiv, $valueDiv, $levelDiv].forEach(function(element) {
+        highScoresView.loadElement(element);
+        element.css({top: "19.5%"});
+      });
+
       highScoresView.$highScoresImg = highScoresView.loadElement(images.$highScoresImg);
 
-      highScoresView.$backLink = highScoresView.createLink("high-scores-back");
+      AsteroidsUI.populateHighScores(0, 10);
+
+      highScoresView.$backLink = highScoresView.createLink("back-link high-scores-back");
       highScoresView.linkHandlers = function() {
         highScoresView.$backLink.click(function() {
           AsteroidsUI.initializeMainMenu();
@@ -285,44 +366,240 @@
           }
         });
       };
+
+      highScoresView.page = 1;
+
+      highScoresView.startLoop = function() {
+        highScoresView.loop = window.setTimeout(function() {
+          var page = AsteroidsUI.highScoresView.page;
+          AsteroidsUI.highScoresView.page = page == 1 ? 2 : 1;
+          page = page == 1 ? 2 : 1;
+          var start = page == 1 ? 0 : 10;
+          var finish = page == 1 ? 10 : 20;
+          AsteroidsUI.reviseHighScoreDivs(start, finish);
+          highScoresView.startLoop();
+        }, 8000);
+      }
+
+      highScoresView.hideView = function() {
+        highScoresView.page = 1;
+        window.clearTimeout(highScoresView.loop);
+        AsteroidsUI.reviseHighScoreDivs(0, 10);
+        CView.prototype.hideView.call(this);
+      };
+    } else {
+      AsteroidsUI.reviseHighScoreDivs(0, 10);
     }
     Starfield.attachTo(AsteroidsUI.highScoresView.parent);
     AsteroidsUI.swapView(AsteroidsUI.highScoresView, [
       AsteroidsUI.highScoresView.linkHandlers,
       AsteroidsUI.highScoresView.keyHandlers,
+      AsteroidsUI.highScoresView.startLoop,
       function() {
         AsteroidsUI.highScoresView.parent.focus();
       }
     ]);
   };
 
-  AsteroidsUI.playerHasHighScore = function() {
-    return false;
-  };
+  AsteroidsUI.populateHighScores = function() {
+    AsteroidsUI.getHighScores({
+      success: function() {
+        AsteroidsUI.highScoresArray.slice(0, 10).forEach(function(score, index) {
+          var $currentRank = AsteroidsUI.highScoresView["$rank" + index] = jQuery("<div/>", {
+            class: "high-score-rank high-score"
+          });
+          var $currentName = AsteroidsUI.highScoresView["$name" + index] = jQuery("<div/>", {
+            class: "high-score-name high-score"
+          });
+          var $currentValue = AsteroidsUI.highScoresView["$value" + index] = jQuery("<div/>", {
+            class: "high-score-value high-score"
+          });
+          var $currentLevel = AsteroidsUI.highScoresView["$level" + index] = jQuery("<div/>", {
+            class: "high-score-level high-score"
+          });
+          
+          var currentElements = [$currentRank, $currentName, $currentValue, $currentLevel];
 
-  AsteroidsUI.sendHighScore = function() {
-  };
+          $currentRank.text(index + 1);
+          $currentName.text(score.player.slice(0, 10));
+          $currentValue.text(score.value);
+          $currentLevel.text(score.level);
 
-  AsteroidsUI.renderText = function(incString, className, sourceBucket) {
-    var imagesArray = [];
-    incString.split("").forEach(function(char) {
-      imagesArray.push($("<img/>"), {
-        class: (className !== undefined ? className + "-" : "") + "text-image",
-        src: sourceBucket + "image-character-" + char
-      });
+          currentElements.forEach(function($element) {
+            $element.css({top: 28 + index * 6 + "%"});
+            AsteroidsUI.highScoresView.loadElement($element);
+          });
+        });
+      }
     });
   };
 
-  Asteroids.checkIsHighScore = function(score) {
+  AsteroidsUI.reviseHighScoreDivs = function(start, finish) {
+    AsteroidsUI.getHighScores({
+      success: function() {
+        AsteroidsUI.highScoresArray.slice(start, finish).forEach(function(score, index) {
+          var $currentRank = AsteroidsUI.highScoresView["$rank" + index];
+          var $currentName = AsteroidsUI.highScoresView["$name" + index];
+          var $currentValue = AsteroidsUI.highScoresView["$value" + index];
+          var $currentLevel = AsteroidsUI.highScoresView["$level" + index];
 
+          var currentElements = [$currentName, $currentValue, $currentLevel];
+
+          $currentRank.text(index + start + 1);
+          $currentName.text(score.player.slice(0, 10));
+          $currentValue.text(score.value);
+          $currentLevel.text(score.level);
+        });
+      }
+    });
+  };
+
+  AsteroidsUI.initializeHighScoresEntry = function(scoreObject) {
+    if(AsteroidsUI.highScoresEntryView === undefined) {
+      var images = AsteroidsUI.imagesHash;
+      var $gameContainer = AsteroidsUI.$gameContainer;
+
+      var $highScoresEntryDiv = jQuery("<div/>", {
+        class: "high-scores-entry-div",
+        tabIndex: this.getTabIndex
+      });
+
+      var highScoresEntryView = AsteroidsUI.highScoresEntryView = new CView({
+        parent: $highScoresEntryDiv,
+        target: $gameContainer,
+        visible: true,
+        transitionTime: 0
+      });
+
+      var $highScoresEntryImg = highScoresEntryView.loadElement(images.$highScoresEntryImg);
+
+      highScoresEntryView.entryString = "";
+      var $entryBox = highScoresEntryView.$entryBox = highScoresEntryView.loadElement(jQuery("<div/>", {
+        class: "high-scores-name-entry"
+      }));
+      $entryBox.text("__________");
+
+      highScoresEntryView.$backLink = highScoresEntryView.createLink("back-link hsev-back");
+      highScoresEntryView.linkHandlers = function() {
+        this.$backLink.click(function() {
+          AsteroidsUI.initializeMainMenu();
+        });
+      };
+
+      highScoresEntryView.keyHandlers = function() {
+        var that = this;
+        this.parent.keydown(function(event) {
+          event.preventDefault();
+          event.stopPropagation();
+          if(event.which == 27) {
+            AsteroidsUI.initializeMainMenu();
+          } else if ((event.which >= 33 && event.which <= 126)
+            && that.entryString.length < 10) {
+            that.entryString += String.fromCharCode(event.which);
+            that.$entryBox.text((that.entryString + "__________").slice(0, 10));
+          } else if (event.which == 8) {
+            that.entryString = that.entryString.substr(0, that.entryString.length - 1);
+            that.$entryBox.text((that.entryString + "__________").slice(0, 10));
+          } else if (event.which == 13) {
+            if(that.entryString !== "") {
+              that.submitting = true;
+              that.scoreObject.score.player = that.entryString;
+              that.submitScore(that.scoreObject);
+            } else {
+              AsteroidsUI.initializeMainMenu();
+            }
+          }
+        });
+      };
+
+      highScoresEntryView.submitScore = function() {
+        var that = this;
+        $.ajax({
+          type: "POST",
+          url: AsteroidsUI.highScoresHost,
+          data: that.scoreObject,
+          crossDomain: true,
+          dataType: "json",
+          success: function(a, b, c) {
+            alert("Congrobulations! Score sent.");
+            AsteroidsUI.initializeHighScores();
+          },
+          error: function(a, b, c) {
+            alert("Could not send score :(");
+            var fillerScore = that.scoreObject;
+            AsteroidsUI.initializeHighScoresEntry(fillerScore);
+          },
+          complete: function() {
+            that.submitting = false;
+          }
+        });
+      };
+
+      highScoresEntryView.clearInput = function(scoreObject) {
+        this.scoreObject = scoreObject || null;
+        this.entryString = "";
+        this.$entryBox.text("__________");
+      };
+
+      highScoresEntryView.hideView = function(scoreObject) {
+        this.clearInput(scoreObject);
+        CView.prototype.hideView.call(this);
+      };
+    }
+    var view = AsteroidsUI.highScoresEntryView;
+    view.scoreObject = scoreObject;
+    Starfield.attachTo(view.parent);
+    AsteroidsUI.swapView(view, [
+      function() {
+        view.linkHandlers.call(view);
+        view.keyHandlers.call(view);
+        view.parent.focus();
+      }
+    ]);
   };
 
   AsteroidsUI.UICallbacks = {
+    checkHighScore: function() {
+      var game = AsteroidsUI.game;
+      var score = game.score;
+      var level = game.level;
+      score += game.lives * 1000;
+      score *= 1 + level/100;
+      var scoreObject;
+      var callback = function() {
+        scoreObject = {
+          score: {
+            "game_id": 2,
+            "player": "",
+            "value": score,
+            "level": level
+          }
+        };
+      };
+      AsteroidsUI.getHighScores({
+        success: function() {
+          var hiScores = AsteroidsUI.highScoresArray;
+          if(score > hiScores[hiScores.length - 1].value) {
+            callback();
+            AsteroidsUI.initializeHighScoresEntry(scoreObject);
+            Starfield.start(AsteroidsUI.$gameContainer);
+          } else {
+            AsteroidsUI.initializeMainMenu();
+            Starfield.start(AsteroidsUI.$gameContainer);
+          }
+        },
+        error: function() {
+          alert("Could not reach high scores server");
+          AsteroidsUI.initializeMainMenu();
+          Starfield.start(AsteroidsUI.$gameContainer);
+        }
+      });
+    },
     preparation: function() {
-      AsteroidsUI.gameView.$getReadyImg.css({opacity: 1});
+      AsteroidsUI.gameView.$getReadyDiv.css({opacity: 1});
     },
     endPreparation: function() {
-      AsteroidsUI.gameView.$getReadyImg.css({opacity: 0});
+      AsteroidsUI.gameView.$getReadyDiv.css({opacity: 0});
     },
     update: function() {
       AsteroidsUI.gameView.$scoreHolder.text("Score " + AsteroidsUI.game.score);
@@ -330,28 +607,20 @@
       AsteroidsUI.gameView.$levelHolder.text("Level " + AsteroidsUI.game.level)
     },
     beforeLoss: function() {
-      AsteroidsUI.gameView.$gameOverImg.css({opacity: 1});
+      AsteroidsUI.gameView.$gameOverDiv.css({opacity: 1});
     },
     loss: function() {
-      AsteroidsUI.gameView.$gameOverImg.css({opacity: 0});
-      AsteroidsUI.initializeMainMenu();
-      Starfield.start(AsteroidsUI.$gameContainer); 
+      AsteroidsUI.gameView.$gameOverDiv.css({opacity: 0});
+      this.checkHighScore();
+      createjs.Sound.stop();
     },
     win: function() {
-      AsteroidsUI.gameView.$youWinImg.css({opacity: 1});
-      var playerName = "";
-      if(AsteroidsUI.playerHasHighScore()) {
-        var notification = "Congratulations! You got a high score! Enter your name";
-        notification += " (alphanumeric characters only) or leave blank to skip."
-        prompt(notification, playerName);
-      }
-      if(playerName !== "") {
-        AsteroidsUI.sendHighScore();
-      }
+      AsteroidsUI.gameView.$youWinDiv.css({opacity: 1});
+      var that = this;
       window.setTimeout(function() {
-        AsteroidsUI.gameView.$youWinImg.css({opacity: 0});
-        AsteroidsUI.initializeMainMenu();
-        Starfield.start(AsteroidsUI.$gameContainer);
+        AsteroidsUI.gameView.$youWinDiv.css({opacity: 0});
+        that.checkHighScore();
+        createjs.Sound.stop();
       }, 2000);
     }
   };
@@ -366,7 +635,12 @@
       var $canvasJQ = $('<canvas id="game">');
       $canvasJQ.appendTo($canvasContainer);
       var canvas = $canvasJQ[0] // Retrieve HTML object
-      var gameView = AsteroidsUI.gameView = new CView($canvasContainer, $gameContainer, true);
+      var gameView = AsteroidsUI.gameView = new CView({
+        parent: $canvasContainer,
+        target: $gameContainer,
+        visible: true,
+        transitionTime: 0
+      });
 
       gameView.$scoreHolder = gameView.loadElement(jQuery("<div/>"));
       gameView.$livesHolder = gameView.loadElement(jQuery("<div/>"));
@@ -376,9 +650,18 @@
       gameView.$livesHolder.addClass("asteroids-lives-holder game-holder");
       gameView.$levelHolder.addClass("asteroids-level-holder game-holder");
 
-      gameView.$getReadyImg = gameView.loadElement(images.$getReadyImg);
-      gameView.$gameOverImg = gameView.loadElement(images.$gameOverImg);
-      gameView.$youWinImg = gameView.loadElement(images.$youWinImg);
+      gameView.$getReadyDiv = gameView.loadElement($("<div/>", {
+        class: "get-ready-div game-text"
+      }));
+      gameView.$getReadyDiv.text("get ready");
+      gameView.$gameOverDiv = gameView.loadElement($("<div/>", {
+        class: "game-over-div game-text"
+      }));
+      gameView.$gameOverDiv.text("game over");
+      gameView.$youWinDiv = gameView.loadElement($("<div/>", {
+        class: "you-win-div game-text"
+      }));
+      gameView.$youWinDiv.text("you win");
 
       gameView = canvas.width = Asteroids.SIZE;
       gameView = canvas.height = Asteroids.SIZE;

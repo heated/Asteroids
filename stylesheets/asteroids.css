@@ -1,9 +1,16 @@
-.centered {
-  width: 500px;
-  margin: 0 auto;
-}
+@font-face {
+  font-family: "hyperspaceregular";
+  src: url("https://s3-us-west-2.amazonaws.com/polaris-asteroids-main/hyperspace-font/hyperspace-webfont.eot");
+  src: url("https://s3-us-west-2.amazonaws.com/polaris-asteroids-main/hyperspace-font/hyperspace-webfont.eot?#iefix") format("embedded-opentype"),
+       url("https://s3-us-west-2.amazonaws.com/polaris-asteroids-main/hyperspace-font/hyperspace-webfont.woff") format("woff"),
+       url("https://s3-us-west-2.amazonaws.com/polaris-asteroids-main/hyperspace-font/hyperspace-webfont.ttf")  format("truetype"),
+       url("https://s3-us-west-2.amazonaws.com/polaris-asteroids-main/hyperspace-font/hyperspace-webfont.svg#hyperspaceregular") format("svg");
+  }
 
 #asteroids-game {
+  outline: 0;
+  font-family: "hyperspaceregular",  Monaco, monospace;
+  color: white;
   background: black;
   border: 1px solid;
   position: relative;
@@ -13,6 +20,18 @@
     -ms-user-select: none;
      -o-user-select: none;
         user-select: none; 
+  width: 500px;
+  height: 500px;
+  margin: 0 auto;
+}
+
+#asteroids-game .back-link {
+  position: absolute;
+  width: 49%;
+  height: 5%;
+  cursor: pointer;
+  left: 2%;
+  bottom: 2%;
 }
 
 /* Loading */
@@ -23,31 +42,13 @@
   background: black;
 }
 
-#asteroids-game .loading-text-image {
+#asteroids-game .loading-text-div {
+  width: 40.5%;
+  height: 10%;
+  font-size: 36pt;
   position: absolute;
-  left: 33.4%;
-  bottom: 50%;
-}
-
-#asteroids-game .loading-ellipsis {
-  width: .5%;
-  height: .5%;
-  bottom: 50%;
-  position: absolute;
-  background-color: white;
-  opacity: 0;
-}
-
-#asteroids-game .loading-ellipsis.ellipsis-one {
-  left: 68.6%;
-}
-
-#asteroids-game .loading-ellipsis.ellipsis-two {
-  left: 70.6%;
-}
-
-#asteroids-game .loading-ellipsis.ellipsis-three {
-  left: 72.6%;
+  left: 30%;
+  top: 40%;
 }
 
 /* Main Menu */
@@ -106,15 +107,6 @@
   position: absolute;
 }
 
-#asteroids-game .about-back-link {
-  position: absolute;
-  width: 49%;
-  height: 5%;
-  cursor: pointer;
-  left: 2%;
-  bottom: 2%;
-}
-
 #asteroids-game .about-div .outbound-link {
   height: 4%;
   position: absolute;
@@ -149,19 +141,48 @@
   position: absolute;
 }
 
-#asteroids-game .help-back-link {
+/* High Scores View */
+
+#asteroids-game .high-score {
+  font-size: 20pt;
+  height: 7%;
   position: absolute;
-  width: 49%;
-  height: 5%;
-  cursor: pointer;
-  left: 2%;
-  bottom: 2%;
+}
+
+#asteroids-game .high-score-rank {
+  width: 10%;
+  left: 6%;
+}
+
+#asteroids-game .high-score-name {
+  width: 30%;
+  left: 17%;
+}
+
+#asteroids-game .high-score-value {
+  width: 30%;
+  left: 55.5%;
+}
+
+#asteroids-game .high-score-level {
+  width: 10%;
+  left: 78.5%;
+}
+
+/* High Scores Entry */
+
+#asteroids-game .high-scores-name-entry {
+  text-align: center;
+  position: absolute;
+  width:100%;
+  height:20%;
+  top: 50%;
+  font-size: 30pt;
 }
 
 /* Game View */
 
 #asteroids-game .game-holder {
-  font-family: "Lucida Console", Monaco, monospace;
   position: absolute;
   top: 2%;
   color: white;
@@ -181,32 +202,11 @@
   left: 87%;
 }
 
-#asteroids-game .high-scores-back-link {
-  position: absolute;
-  width: 49%;
-  height: 5%;
-  cursor: pointer;
-  left: 2%;
-  bottom: 2%;
-}
-
-#asteroids-game .get-ready-image {
+#asteroids-game .game-text{
+  width: 100%;
   opacity: 0;
   position: absolute;
-  left: 30.6%;
-  top: 47.4%;
-}
-
-#asteroids-game .game-over-image {
-  opacity: 0;
-  position: absolute;
-  left: 30.6%;
-  top: 47.4%;
-}
-
-#asteroids-game .you-win-image {
-  opacity: 0;
-  position: absolute;
-  left: 35%;
-  top: 47.4%;
+  top: 40%;
+  font-size: 26pt;
+  text-align: center
 }

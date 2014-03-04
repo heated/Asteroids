@@ -1,154 +1,99 @@
 $(document).ready(function() {
+  window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
+                              window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
   var $gameContainer = AsteroidsUI.$gameContainer = $("#asteroids-game");
+  var s3AmazonBucket = AsteroidsUI.s3AmazonBucket;
 
-  AsteroidsUI.imagesHash = {
-    // loading view
-    $loadingTextImg: jQuery("<img/>", {
-      class: "loading-text-image",
-      src: "https://s3-us-west-2.amazonaws.com/polaris-asteroids-main/loading-image.png"
-    }),
+  if ($gameContainer.attr("id") !== undefined) {
+    AsteroidsUI.imagesHash = {
+      // menu view
+      $mainMenuImg: jQuery("<img/>", {
+        class: "main-menu-image",
+        src: s3AmazonBucket + "asteroids-main-menu.png"
+      }),
 
-    // menu view
-    $mainMenuImg: jQuery("<img/>", {
-      class: "main-menu-image",
-      src: "https://s3-us-west-2.amazonaws.com/polaris-asteroids-main/asteroids-main-menu.png"
-    }),
+      // about view
+      $aboutImg: jQuery("<img/>",{
+        class: "about-image",
+        src: s3AmazonBucket + "asteroids-about-image.png"
+      }),
 
-    // about view
-    $aboutImg: jQuery("<img/>",{
-      class: "about-image",
-      src: "https://s3-us-west-2.amazonaws.com/polaris-asteroids-main/asteroids-about-image.png"
-    }),
+      // help view
+      $helpImg: jQuery("<img/>",{
+        class: "help-image",
+        src: s3AmazonBucket + "asteroids-help-image.png"
+      }),
 
-    // help view
-    $helpImg: jQuery("<img/>",{
-      class: "help-image",
-      src: "https://s3-us-west-2.amazonaws.com/polaris-asteroids-main/asteroids-help-image.png"
-    }),
+      // high scores view
+      $highScoresImg: jQuery("<img/>",{
+        class: "high-scores-image",
+        src: s3AmazonBucket + "asteroids-high-scores.png"
+      }),
 
-    // high scores view
-    $highScoresImg: jQuery("<img/>",{
-      class: "high-scores-image",
-      src: "https://s3-us-west-2.amazonaws.com/polaris-asteroids-main/asteroids-high-scores.png"
-    }),
+      // enter high score view
+      $highScoresEntryImg: jQuery("<img/>",{
+        class: "high-scores-entry-image",
+        src: s3AmazonBucket + "asteroids-enter-high-score.png"
+      }),
+    };
 
-    // game view
-    $getReadyImg: jQuery("<img/>",{
-      class: "get-ready-image",
-      src: "https://s3-us-west-2.amazonaws.com/polaris-asteroids-main/get-ready.png"
-    }),
+    // "abcdefghijklmnopqrstuvwxyz1234567890 ".split("").forEach(function(character) {
+    //   var url_character = AsteroidsUI.specialCharacterString(character);
+    //   AsteroidsUI.imagesHash["$" + url_character + "Img"] = jQuery("<img/>", {
+    //     src: s3AmazonBucket + "characters/" + url_character + "-image.png"
+    //   });
+    // });
 
-    $gameOverImg: jQuery("<img/>",{
-      class: "game-over-image",
-      src: "https://s3-us-west-2.amazonaws.com/polaris-asteroids-main/game-over.png"
-    }),
+    // Another artifact from attempting to parse strings to a series of inline images
 
-    $youWinImg: jQuery("<img/>",{
-      class: "you-win-image",
-      src: "https://s3-us-west-2.amazonaws.com/polaris-asteroids-main/you-win.png"
-    })
-  };
+    AsteroidsUI.initializeLoadingView();
 
-  AsteroidsUI.initializeLoadingView();
-
-  AsteroidsUI.soundsArray = new Array;
-  soundManager.setup({
-    url: "https://s3-us-west-1.amazonaws.com/polaris-pillar-main/soundmanager2.swf",
-    flashVersion: 8,
-    onready: function() {
-
-      soundManager.createSound({
-        id: "explode1",
-        url: "https://s3-us-west-2.amazonaws.com/polaris-asteroids-main/explode1.wav",
-        autoLoad: true,
-        autoPlay: false,
-        stream: false,
-        onload: function() {
-          AsteroidsUI.soundsArray.push(this);
-        },
-        volume: 100
-      });
-
-      soundManager.createSound({
-        id: "life",
-        url: "https://s3-us-west-2.amazonaws.com/polaris-asteroids-main/life.wav",
-        autoLoad: true,
-        autoPlay: false,
-        stream: false,
-        onload: function() {
-          AsteroidsUI.soundsArray.push(this);
-        },
-        volume: 100
-      });
-
-      soundManager.createSound({
-        id: "explode2",
-        url: "https://s3-us-west-2.amazonaws.com/polaris-asteroids-main/explode2.wav",
-        autoLoad: true,
-        autoPlay: false,
-        stream: false,
-        onload: function() {
-          AsteroidsUI.soundsArray.push(this);
-        },
-        volume: 100
-      });
-
-      soundManager.createSound({
-        id: "explode3",
-        url: "https://s3-us-west-2.amazonaws.com/polaris-asteroids-main/explode3.wav",
-        autoLoad: true,
-        autoPlay: false,
-        stream: false,
-        onload: function() {
-          AsteroidsUI.soundsArray.push(this);
-        },
-        volume: 100
-      });
-
-      soundManager.createSound({
-        id: "fire",
-        url: "https://s3-us-west-2.amazonaws.com/polaris-asteroids-main/fire.wav",
-        autoLoad: true,
-        autoPlay: false,
-        stream: false,
-        onload: function() {
-          AsteroidsUI.soundsArray.push(this);
-        },
-        volume: 100
-      });
-
-      soundManager.createSound({
-        id: "thrust",
-        url: "https://s3-us-west-2.amazonaws.com/polaris-asteroids-main/thrust.wav",
-        autoLoad: true,
-        autoPlay: false,
-        stream: false,
-        onload: function() {
-          AsteroidsUI.soundsArray.push(this);
-        },
-        volume: 100
-      });
+    if (!createjs.Sound.registerPlugins([createjs.WebAudioPlugin, 
+      createjs.HTMLAudioPlugin])) {
+      return;
     }
-  });
+    var manifest = [
+        {id:"lsaucer", src:"lsaucer.ogg", data: 4, volume:.5},
+        {id:"ssaucer", src:"ssaucer.ogg", data: 4, volume:.5},
+        {id:"explode1", src:"explode1.ogg", data: 4},
+        {id:"explode2", src:"explode2.ogg", data: 4},
+        {id:"explode3", src:"explode3.ogg", data: 4},
+        {id:"life", src:"life.ogg", data: 4},
+        {id:"fire", src:"fire.ogg", data: 4},
+        {id:"sfire", src:"sfire.ogg", data: 4},
+        {id:"thrust", src:"thrust.ogg", data: 99},
+    ];
+ 
+    var numSoundsLoaded = 0;
 
-  var tryLoad = function() {
-    var imagesLoaded = function() {
-      var loaded = true;
-      $.each(AsteroidsUI.imagesHash, function(index,value) {
-        if(!value.get()[0].complete) {
-          loaded = false;
-          return;
-        }
-      });
-      return loaded;
-    } 
-    if(imagesLoaded() && AsteroidsUI.soundsArray.length == 6) {
-      AsteroidsUI.initializeMainMenu();
-    } else {
-      setTimeout(function() {
-        tryLoad();
-      }, 1000);
+    function handleLoad(event) {
+      numSoundsLoaded += 1;
+    };
+
+    createjs.Sound.alternateExtensions = ["wav"];
+
+    createjs.Sound.addEventListener("fileload", handleLoad);
+    createjs.Sound.registerManifest(manifest, s3AmazonBucket + "sound/");
+     
+    var tryLoad = function() {
+      var imagesLoaded = function() {
+        var loaded = true;
+        $.each(AsteroidsUI.imagesHash, function(index,value) {
+          if(!value.get()[0].complete) {
+            loaded = false;
+            return;
+          }
+        });
+        return loaded;
+      } 
+      if(imagesLoaded() && numSoundsLoaded == 9) {
+        AsteroidsUI.initializeMainMenu();
+      } else {
+        setTimeout(function() {
+          tryLoad();
+        }, 1000);
+      }
     }
+    tryLoad();
   }
-  tryLoad();
 });
