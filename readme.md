@@ -4,6 +4,7 @@ This is a retro-style remake of the 1979 Atari arcade classic, Asteroids.
 It includes a healthy chunk of awesome technical features, including:
 
 - A physics engine and aiming subroutines!
+- Progressively finer hit detection for greater efficiency!
 - Object-oriented game entities and prototypal inheritance!
 - A Rails-powered high scores back-end!
 - A JavaScript custom-written view-based user interface!
