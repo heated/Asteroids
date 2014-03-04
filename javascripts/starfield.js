@@ -22,7 +22,7 @@
     var starIndex = 0;
     starArray.forEach(function(star) {
       star.step();
-      if(star.isOutOfBounds()){
+      if(star.isOutOfBounds() || star.checkToClear()){
         starArray.splice(starIndex, 1);
         star.removeSelf.call(star);
       }
@@ -99,12 +99,12 @@
 
   Star.prototype.checkToClear = function() {
     if(this.size > Starfield.size/100 + 2) {
-      this.removeSelf();
+      return true;
     }
+    return false;
   };
 
   Star.prototype.step = function() {
-    this.checkToClear();
     this.location[0] += this.speed * this.direction[0];
     this.location[1] += this.speed * this.direction[1];
     this.speed += this.acceleration;
