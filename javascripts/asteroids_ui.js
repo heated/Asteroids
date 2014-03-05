@@ -563,6 +563,18 @@
       var game = AsteroidsUI.game;
       var score = game.score;
       var level = game.level;
+      var elapsed = game.totalElapsed;
+      var lives = game.lives;
+
+      if(score % 10 !== 0 ||
+        (lives > 0 && level !== 50) ||
+        level * 300 > elapsed ||
+        level > 50 ||
+        lives > elapsed) {
+        alert("Nope ;)");
+        AsteroidsUI.initializeMainMenu();
+        Starfield.start(AsteroidsUI.$gameContainer);
+      }
       score += game.lives * 1000;
       score *= 1 + level/100;
       var scoreObject;
