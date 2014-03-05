@@ -54,6 +54,7 @@
 
     step: function() {
       this.elapsed += 1;
+      this.totalElapsed += 1;
       if(this.player !== null) {
         this.player.decelerate(.01);
         this.playerInput();
@@ -110,6 +111,7 @@
     },
 
     start: function() {
+      this.totalElapsed = (this.totalElapsed === undefined ? 0 : this.totalElapsed);
       this.elapsed = 0;
       this.invincibleTimer = 0;
       this.pointsToNextLife = (this.pointsToNextLife === undefined ? 10000 : this.pointsToNextLife)
