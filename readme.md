@@ -1,4 +1,4 @@
-#[Asteroids] (https://vardarac-portfolio.herokuapp.com/games/asteroids)
+#[Asteroids] (http://vardarac-portfolio.herokuapp.com/games/asteroids)
 
 This is a retro-style remake of the 1979 Atari arcade classic, Asteroids.
 It includes a healthy chunk of awesome technical features, including:
