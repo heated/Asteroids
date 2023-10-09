@@ -22,4 +22,4 @@ And if you're not really into those, I guess there's some gameplay and stuff in 
 Feel free to clone or hop onto the [Heroku host] (https://polaris-portfolio.herokuapp.com/games/asteroids). High score cheaters welcome and likely to be cleared once a month ;)
 
 Cheers,
-[Polaris] (https://github.com/Polaris)
+[Polaris] (https://github.com/Coding-Polaris)

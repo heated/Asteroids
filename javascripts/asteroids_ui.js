@@ -175,7 +175,7 @@
           window.open("https://github.com/heated");
         });
         aboutView.$polarisLink.click(function() {
-          window.open("https://github.com/polaris");
+          window.open("https://github.com/Coding-Polaris");
         });
 
         aboutView.$backLink.click(function() {
@@ -417,7 +417,7 @@
           var $currentLevel = AsteroidsUI.highScoresView["$level" + index] = jQuery("<div/>", {
             class: "high-score-level high-score"
           });
-          
+
           var currentElements = [$currentRank, $currentName, $currentValue, $currentLevel];
 
           $currentRank.text(index + 1);
@@ -677,7 +677,7 @@
 
       gameView = canvas.width = Asteroids.SIZE;
       gameView = canvas.height = Asteroids.SIZE;
-    
+
       var ctx = canvas.getContext("2d");
 
       var game = AsteroidsUI.game = new Asteroids.Game(ctx, AsteroidsUI.UICallbacks);
